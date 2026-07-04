@@ -39,10 +39,10 @@ This repo includes a [`render.yaml`](../render.yaml) blueprint that creates ever
 
 Render shows 4 resources to create:
 
-- `codity-db` (Postgres)
-- `codity-api` (Web Service)
-- `codity-worker` (Background Worker)
-- `codity-frontend` (Static Site)
+- `codity-db` (Postgres — free)
+- `codity-api` (Web Service — free)
+- `codity-worker` (Background Worker — **starter plan**, ~$7/mo; free tier not supported for workers)
+- `codity-frontend` (Static Site — free)
 
 Click **Apply** again to start deploying.
 
@@ -106,6 +106,7 @@ Skip Blueprint. Manually add only:
 
 | Problem | Fix |
 |---------|-----|
+| Blueprint validation error | Ensure `fromGroup` (not `envVarGroups`) links secrets; worker must use `plan: starter` |
 | API build fails | Check Logs on `codity-api`; ensure latest code is pushed |
 | Worker 401 | Redeploy worker — `WORKER_REGISTRATION_KEY` must match API |
 | Blank frontend | Redeploy frontend after API is live |

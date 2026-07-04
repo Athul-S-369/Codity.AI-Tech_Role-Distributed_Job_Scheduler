@@ -17,7 +17,6 @@ envVarGroups:
         generateValue: true
 
 services:
-  # ── API (Express + WebSocket + scheduler) ──────────────────────────────
   - type: web
     name: codity-api
     runtime: node
@@ -26,9 +25,8 @@ services:
     buildCommand: npm install && npm run render:build:api
     startCommand: npm run start -w backend
     healthCheckPath: /health
-    envVarGroups:
-      - codity-secrets
     envVars:
+      - fromGroup: codity-secrets
       - key: NODE_ENV
         value: production
       - key: RUN_SCHEDULER_IN_API
@@ -43,17 +41,15 @@ services:
           name: codity-frontend
           envVarKey: RENDER_EXTERNAL_URL
 
-  # ── Worker (polls API, runs jobs) ──────────────────────────────────────
   - type: worker
     name: codity-worker
     runtime: node
     region: singapore
-    plan: free
+    plan: starter
     buildCommand: npm install && npm run render:build:worker
     startCommand: npm run start -w worker
-    envVarGroups:
-      - codity-secrets
     envVars:
+      - fromGroup: codity-secrets
       - key: API_URL
         fromService:
           type: web
@@ -62,11 +58,9 @@ services:
       - key: WORKER_MAX_CONCURRENCY
         value: "5"
 
-  # ── Frontend (React static site) ───────────────────────────────────────
   - type: web
     name: codity-frontend
     runtime: static
-    region: singapore
     buildCommand: npm install && npm run render:build:frontend
     staticPublishPath: frontend/dist
     routes:
