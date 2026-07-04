@@ -79,6 +79,7 @@ docs/        architecture notes, schema, API list
 ## Docs
 
 - [architecture.md](docs/architecture.md) — how the pieces fit together
+- [deploy-render.md](docs/deploy-render.md) — one-click Render Blueprint deploy
 - [er-diagram.md](docs/er-diagram.md) — tables, indexes
 - [api-documentation.md](docs/api-documentation.md) — endpoint reference
 - [design-decisions.md](docs/design-decisions.md) — tradeoffs and rationale
