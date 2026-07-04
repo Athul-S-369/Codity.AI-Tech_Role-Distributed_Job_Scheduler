@@ -13,12 +13,12 @@
     "@codity/shared": "*",
     "dotenv": "^16.4.7",
     "os": "^0.1.2",
-    "winston": "^3.17.0"
-  },
-  "devDependencies": {
+    "winston": "^3.17.0",
     "@types/node": "^22.10.7",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
     "vitest": "^3.0.4"
   }
 }

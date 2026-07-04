@@ -4,6 +4,9 @@
   "private": true,
   "description": "Distributed job scheduler — Athul S (RA2311047010117)",
   "author": "Athul S <RA2311047010117>",
+  "engines": {
+    "node": ">=20"
+  },
   "workspaces": [
     "backend",
     "worker",
@@ -19,7 +22,10 @@
     "test": "npm run test -w backend && npm run test -w worker",
     "db:migrate": "npm run db:migrate -w backend",
     "db:seed": "npm run db:seed -w backend",
-    "db:studio": "npm run db:studio -w backend"
+    "db:studio": "npm run db:studio -w backend",
+    "render:build:api": "npm run build -w shared && npm run build -w backend && npm run db:push -w backend && npm run db:seed -w backend",
+    "render:build:worker": "npm run build -w shared && npm run build -w worker",
+    "render:build:frontend": "npm run build -w shared && npm run build -w frontend"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
