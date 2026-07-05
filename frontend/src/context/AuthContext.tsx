@@ -1,5 +1,9 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { api } from '../lib/api';
+import { IS_DEMO } from '../lib/isDemo';
+import { DEMO_USER } from '../demo/fixtures';
+
+const DEMO_TOKEN = 'demo-token-visual-mode';
 
 interface User {
   id: string;
@@ -19,23 +23,36 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => {
+    if (IS_DEMO) return DEMO_USER;
     const stored = localStorage.getItem('user');
     return stored ? JSON.parse(stored) : null;
   });
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
+  const [token, setToken] = useState<string | null>(() =>
+    IS_DEMO ? DEMO_TOKEN : localStorage.getItem('token')
+  );
+
+  useEffect(() => {
+    if (!IS_DEMO) return;
+    localStorage.setItem('token', DEMO_TOKEN);
+    localStorage.setItem('user', JSON.stringify(DEMO_USER));
+  }, []);
 
   const login = async (email: string, password: string) => {
     const result = await api.login(email, password);
-    localStorage.setItem('token', result.token);
-    localStorage.setItem('user', JSON.stringify(result.user));
+    if (!IS_DEMO) {
+      localStorage.setItem('token', result.token);
+      localStorage.setItem('user', JSON.stringify(result.user));
+    }
     setToken(result.token);
     setUser(result.user);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('scheduler-context');
+    if (!IS_DEMO) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('scheduler-context');
+    }
     setToken(null);
     setUser(null);
   };

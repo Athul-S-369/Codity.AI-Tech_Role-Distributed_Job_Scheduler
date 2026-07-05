@@ -25,7 +25,10 @@
     "db:studio": "npm run db:studio -w backend",
     "render:build:api": "npm run build -w shared && npm run build -w backend && npm run db:push -w backend && npm run db:seed -w backend",
     "render:build:worker": "npm run build -w shared && npm run build -w worker",
-    "render:build:frontend": "npm run build -w shared && node frontend/scripts/prepare-render-env.mjs"
+    "render:build:frontend": "npm run build -w shared && node frontend/scripts/prepare-render-env.mjs",
+    "render:start:api": "bash scripts/start-render-api.sh",
+    "dev:demo": "npm run dev:demo -w frontend",
+    "build:demo": "npm run build -w shared && npm run build:demo -w frontend"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",

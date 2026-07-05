@@ -15,6 +15,8 @@ import { useApp } from '../context/AppContext';
 import { api, Project } from '../lib/api';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { AUTHOR_LABEL, AUTHOR_NAME, AUTHOR_REGISTRATION } from '@codity/shared';
+import { IS_DEMO } from '../lib/isDemo';
+import { DemoBanner } from './DemoBanner';
 
 const nav = [
   { to: '/', icon: LayoutDashboard, label: 'Overview' },
@@ -117,8 +119,11 @@ export function Layout() {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-auto">
-        <Outlet />
+      <main className="flex-1 overflow-auto flex flex-col">
+        {IS_DEMO && <DemoBanner />}
+        <div className="flex-1 overflow-auto">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

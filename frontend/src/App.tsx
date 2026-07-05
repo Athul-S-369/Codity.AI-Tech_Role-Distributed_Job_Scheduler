@@ -11,6 +11,12 @@ import { QueuesPage } from './pages/QueuesPage';
 import { TeamPage } from './pages/TeamPage';
 import { Spinner } from './components/ui';
 
+function LoginRoute() {
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) return <Navigate to="/" replace />;
+  return <LoginPage />;
+}
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
   const { loading } = useApp();
@@ -29,7 +35,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/login" element={<LoginRoute />} />
       <Route
         element={
           <ProtectedRoute>

@@ -19,7 +19,7 @@ export class ApiClient {
   constructor(
     private workerId: string,
     private workerSecret: string
-  ) {}
+  ) { }
 
   private async request<T>(
     method: string,

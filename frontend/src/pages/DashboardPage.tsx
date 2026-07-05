@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Activity, CheckCircle, Clock, Server, AlertTriangle, Zap } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Legend } from 'recharts';
 import { api, MetricsSnapshot, ThroughputPoint, SystemEvent } from '../lib/api';
 import { useApp } from '../context/AppContext';
 import { StatCard, Card, Badge } from '../components/ui';
@@ -54,6 +54,7 @@ export function DashboardPage() {
     completed: p.completed,
     failed: p.failed,
   }));
+  const hasThroughputActivity = chartData.some((p) => p.completed > 0 || p.failed > 0);
 
   const barData = metrics?.queueHealth
     ? Object.entries(metrics.queueHealth).map(([name, s]) => ({
@@ -81,16 +82,30 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <h3 className="font-medium mb-4 flex items-center gap-2"><Activity size={18} className="text-brand-500" />Throughput</h3>
-          <ChartBox height={220}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="time" stroke="#64748b" fontSize={12} />
-              <YAxis stroke="#64748b" fontSize={12} />
-              <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', color: '#0f172a' }} />
-              <Line type="monotone" dataKey="completed" stroke="#22c55e" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="failed" stroke="#ef4444" strokeWidth={2} dot={false} />
-            </LineChart>
-          </ChartBox>
+          {!hasThroughputActivity ? (
+            <div className="h-[220px] flex flex-col items-center justify-center gap-2 text-sm text-text-secondary">
+              <p>no job history in the last 12 hours</p>
+              <p className="text-xs">run <code className="px-1.5 py-0.5 bg-surface rounded">npm run db:seed -w backend</code> to load sample data</p>
+            </div>
+          ) : (
+            <ChartBox height={220}>
+              <LineChart data={chartData} margin={{ top: 4, right: 12, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="time" stroke="#64748b" fontSize={12} interval="preserveStartEnd" />
+                <YAxis stroke="#64748b" fontSize={12} allowDecimals={false} />
+                <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e2e8f0', color: '#0f172a' }} />
+                <Legend
+                  verticalAlign="top"
+                  height={28}
+                  iconType="circle"
+                  iconSize={8}
+                  formatter={(value) => <span className="text-xs text-text-secondary">{value}</span>}
+                />
+                <Line type="monotone" dataKey="completed" name="completed" stroke="#22c55e" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="failed" name="failed" stroke="#ef4444" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ChartBox>
+          )}
         </Card>
 
         <Card>

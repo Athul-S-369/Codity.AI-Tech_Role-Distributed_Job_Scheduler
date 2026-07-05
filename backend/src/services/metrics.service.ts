@@ -58,8 +58,25 @@ export async function getSystemMetrics() {
   };
 }
 
+function hourBucketKey(date: Date): string {
+  const bucket = new Date(date);
+  bucket.setUTCMinutes(0, 0, 0);
+  return bucket.toISOString();
+}
+
 export async function getThroughputHistory(hours = 24) {
-  const since = new Date(Date.now() - hours * 3_600_000);
+  const slotCount = Math.max(1, Math.min(hours, 168));
+  const now = new Date();
+
+  const slotKeys: string[] = [];
+  for (let i = slotCount - 1; i >= 0; i--) {
+    slotKeys.push(hourBucketKey(new Date(now.getTime() - i * 3_600_000)));
+  }
+
+  const since = new Date(slotKeys[0]!);
+  const buckets = new Map(
+    slotKeys.map((hour) => [hour, { completed: 0, failed: 0, totalDuration: 0 }])
+  );
 
   const executions = await prisma.jobExecution.findMany({
     where: { startedAt: { gte: since } },
@@ -67,25 +84,25 @@ export async function getThroughputHistory(hours = 24) {
     orderBy: { startedAt: 'asc' },
   });
 
-  const buckets: Record<string, { completed: number; failed: number; totalDuration: number }> = {};
-
   for (const exec of executions) {
-    const hour = exec.startedAt.toISOString().slice(0, 13);
-    if (!buckets[hour]) {
-      buckets[hour] = { completed: 0, failed: 0, totalDuration: 0 };
-    }
+    const key = hourBucketKey(exec.startedAt);
+    const bucket = buckets.get(key);
+    if (!bucket) continue;
     if (exec.status === 'COMPLETED') {
-      buckets[hour].completed++;
-      buckets[hour].totalDuration += exec.durationMs ?? 0;
+      bucket.completed++;
+      bucket.totalDuration += exec.durationMs ?? 0;
     } else if (exec.status === 'FAILED') {
-      buckets[hour].failed++;
+      bucket.failed++;
     }
   }
 
-  return Object.entries(buckets).map(([hour, data]) => ({
-    hour,
-    completed: data.completed,
-    failed: data.failed,
-    avgDurationMs: data.completed > 0 ? Math.round(data.totalDuration / data.completed) : 0,
-  }));
+  return slotKeys.map((hour) => {
+    const data = buckets.get(hour)!;
+    return {
+      hour,
+      completed: data.completed,
+      failed: data.failed,
+      avgDurationMs: data.completed > 0 ? Math.round(data.totalDuration / data.completed) : 0,
+    };
+  });
 }

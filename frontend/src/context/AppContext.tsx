@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { api, Organization, ProjectDetail } from '../lib/api';
 import { useAuth } from './AuthContext';
+import { IS_DEMO } from '../lib/isDemo';
+import { DEMO_ORG_ID, DEMO_PROJECT_BILLING } from '../demo/fixtures';
 
 interface AppContextType {
   organizations: Organization[];
@@ -35,7 +37,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const membership = organizations.find((o) => o.id === orgId);
   const role = membership?.role ?? (loading ? '' : 'VIEWER');
-  const canMutate = ['MEMBER', 'ADMIN', 'OWNER'].includes(role);
+  const canMutate = !IS_DEMO && ['MEMBER', 'ADMIN', 'OWNER'].includes(role);
   const isAdmin = ['ADMIN', 'OWNER'].includes(role);
 
   const persist = (oid: string, pid: string) => {
@@ -101,6 +103,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         } catch {
           clearStoredContext();
         }
+      } else if (IS_DEMO) {
+        selectedOrg = DEMO_ORG_ID;
       }
 
       if (selectedOrg) {
@@ -114,6 +118,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
           }
         }
         if (!selectedProject && projects.length) selectedProject = projects[0].id;
+        if (IS_DEMO && projects.some((p) => p.id === DEMO_PROJECT_BILLING)) {
+          selectedProject = DEMO_PROJECT_BILLING;
+        }
 
         setOrgIdState(selectedOrg);
         setProjectIdState(selectedProject);

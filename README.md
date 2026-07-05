@@ -7,6 +7,18 @@ Intern assignment — a background job system with multiple workers, queues, ret
 
 Stack: Node/Express API, separate worker process, React frontend, Postgres + Prisma. Redis is optional (rate limits + scheduler leader lock when available).
 
+## Visual demo (static, mock data)
+
+Interactive **read-only** UI preview — no backend required. Good for sharing with evaluators.
+
+```bash
+npm install
+npm run dev:demo          # http://localhost:5173
+npm run build:demo        # output: frontend/dist → deploy to GitHub Pages / Vercel
+```
+
+See [docs/deploy-visual-demo.md](docs/deploy-visual-demo.md). The banner in demo mode links to the full GitHub repo.
+
 ## How it works (roughly)
 
 ```
@@ -79,6 +91,7 @@ docs/        architecture notes, schema, API list
 ## Docs
 
 - [architecture.md](docs/architecture.md) — how the pieces fit together
+- [deploy-visual-demo.md](docs/deploy-visual-demo.md) — static mock UI for GitHub Pages
 - [deploy-render.md](docs/deploy-render.md) — one-click Render Blueprint deploy
 - [er-diagram.md](docs/er-diagram.md) — tables, indexes
 - [api-documentation.md](docs/api-documentation.md) — endpoint reference

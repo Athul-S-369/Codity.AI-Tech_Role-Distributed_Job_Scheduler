@@ -30,7 +30,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return res.json();
 }
 
-export const api = {
+export const liveApi = {
   login: (email: string, password: string) =>
     request<{ token: string; user: { id: string; email: string; name: string } }>(
       '/auth/login',
@@ -280,3 +280,8 @@ export interface Paginated<T> {
 }
 
 export { ApiError };
+
+import { IS_DEMO } from './isDemo';
+import { demoApi } from './api.demo';
+
+export const api = IS_DEMO ? demoApi : liveApi;
