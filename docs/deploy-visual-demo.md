@@ -33,8 +33,9 @@ Output: `frontend/dist/`
 
 1. Push repo to GitHub
 2. **Settings → Pages → Build and deployment → Source:** **GitHub Actions**
-3. Push to `main` — workflow `.github/workflows/deploy-demo.yml` builds and deploys automatically
+3. Deploy runs automatically when `frontend/`, `shared/`, or the workflow file changes (README-only pushes won't redeploy)
 4. Live URL: `https://<username>.github.io/Codity.AI-Tech_Role-Distributed_Job_Scheduler/`
+5. Manual redeploy: **Actions → Deploy visual demo → Run workflow**
 
 Manual build (subpath base is set automatically in CI via `PAGES_BASE`):
 

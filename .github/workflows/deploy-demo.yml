@@ -4,6 +4,12 @@ name: Deploy visual demo
 on:
   push:
     branches: [main, master]
+    paths:
+      - 'frontend/**'
+      - 'shared/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-demo.yml'
   workflow_dispatch:
 
 permissions:
@@ -13,7 +19,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
