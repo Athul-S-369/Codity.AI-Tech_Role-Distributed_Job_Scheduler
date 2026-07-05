@@ -32,12 +32,16 @@ Output: `frontend/dist/`
 ### GitHub Pages
 
 1. Push repo to GitHub
-2. Settings → Pages → Source: **GitHub Actions** or deploy `frontend/dist` from `gh-pages` branch
-3. If repo is not at domain root, build with base path:
+2. **Settings → Pages → Build and deployment → Source:** **GitHub Actions**
+3. Push to `main` — workflow `.github/workflows/deploy-demo.yml` builds and deploys automatically
+4. Live URL: `https://<username>.github.io/Codity.AI-Tech_Role-Distributed_Job_Scheduler/`
+
+Manual build (subpath base is set automatically in CI via `PAGES_BASE`):
 
 ```bash
-cd frontend
-npm run build:demo -- --base=/Codity.AI-Tech_Role-Distributed_Job_Scheduler/
+# Linux / macOS / Git Bash
+PAGES_BASE=/Codity.AI-Tech_Role-Distributed_Job_Scheduler/ npm run build:demo
+cp frontend/dist/index.html frontend/dist/404.html
 ```
 
 4. Add to submission README:
