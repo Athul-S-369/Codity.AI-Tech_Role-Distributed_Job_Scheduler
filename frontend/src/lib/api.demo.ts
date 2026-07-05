@@ -17,9 +17,9 @@ import {
   type Paginated,
 } from './api';
 import { DEMO_READONLY_MESSAGE } from './isDemo';
+import { buildDemoEvents } from '../demo/generate-fixtures';
 import {
-  DEMO_DLQ,
-  DEMO_EVENTS,
+  DEMO_DLQ_BY_QUEUE,
   DEMO_JOBS,
   DEMO_MEMBERS,
   DEMO_METRICS,
@@ -107,12 +107,7 @@ export const demoApi = {
     queueId: string,
     params?: Record<string, string>
   ): Promise<Paginated<DeadLetterEntry>> => {
-    const queue = Object.values(DEMO_QUEUE_STATS).length && queueId;
-    void queue;
-    const items =
-      queueId === 'demo-q-stripe' || queueId === 'demo-q-webhooks'
-        ? DEMO_DLQ
-        : DEMO_DLQ.slice(0, 3);
+    const items = DEMO_DLQ_BY_QUEUE[queueId] || [];
     return paginate(items, parsePage(params), parseLimit(params, 10));
   },
 
@@ -132,7 +127,7 @@ export const demoApi = {
     return worker;
   },
 
-  getEvents: async (limit = 50): Promise<SystemEvent[]> => DEMO_EVENTS.slice(0, limit),
+  getEvents: async (limit = 50): Promise<SystemEvent[]> => buildDemoEvents(limit),
 
   inviteMember: async () => readonly(),
 
